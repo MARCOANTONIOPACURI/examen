@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Computación e Informática</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin-top: 5px;
+        }
+
+        .quiz-content {
+            padding: 30px;
+        }
+
+        .question-container {
+            margin-bottom: 30px;
+        }
+
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f7fafc;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #eef2ff;
+        }
+
+        .option.correct {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+
+        .option.incorrect {
+            border-color: #f56565;
+            background: #fff5f5;
+        }
+
+        .option.disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #2d3748;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #cbd5e0;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        .feedback.correct {
+            background: #f0fff4;
+            color: #22543d;
+            border: 2px solid #48bb78;
+        }
+
+        .feedback.incorrect {
+            background: #fff5f5;
+            color: #742a2a;
+            border: 2px solid #f56565;
+        }
+
+        .results {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .results h2 {
+            font-size: 32px;
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 30px auto;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .score-value {
+            font-size: 48px;
+            font-weight: bold;
+        }
+
+        .score-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .results-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .result-card {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .result-card h3 {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+
+        .result-card p {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .question-text {
+                font-size: 16px;
+            }
+            
+            .button-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 Balotario de Computación e Informática</h1>
+            <p>Practica con las 200 preguntas del programa</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-label">Pregunta</div>
+                <div class="stat-value" id="currentQuestion">1</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Total</div>
+                <div class="stat-value" id="totalQuestions">200</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Correctas</div>
+                <div class="stat-value" id="correctAnswers">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Incorrectas</div>
+                <div class="stat-value" id="incorrectAnswers">0</div>
+            </div>
+        </div>
+
+        <div class="quiz-content" id="quizContent">
+            <!-- Aquí se cargarán las preguntas -->
+        </div>
+
+        <div class="results" id="results" style="display: none;">
+            <!-- Aquí se mostrarán los resultados finales -->
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {q: "¿Qué se entiende por diseño gráfico?", opts: ["El arte de pintar retratos", "La disciplina que comunica ideas visualmente a través de imágenes y texto", "El proceso de fabricar objetos industriales", "La técnica de grabar imágenes en piedra"], ans: 1},
+            {q: "¿En qué siglo se consolida el diseño gráfico como profesión moderna?", opts: ["Siglo XV", "Siglo XIX", "Siglo XX", "Siglo XVIII"], ans: 2},
+            {q: "¿Qué movimiento influyó fuertemente en los inicios del diseño gráfico moderno?", opts: ["El cubismo", "La Bauhaus", "El renacimiento", "El expresionismo"], ans: 1},
+            {q: "¿Cuál fue uno de los primeros hitos del diseño gráfico en la historia?", opts: ["La invención de la imprenta por Gutenberg", "La aparición del internet", "La creación del primer logotipo digital", "El surgimiento del diseño 3D"], ans: 0},
+            {q: "¿Qué función principal tuvo el diseño gráfico en sus orígenes?", opts: ["Decorar objetos", "Comunicar mensajes visuales y publicitarios", "Crear efectos visuales", "Diseñar ropa"], ans: 1},
+            {q: "¿Qué es el color en el diseño gráfico?", opts: ["Un elemento decorativo sin función comunicativa", "Un elemento visual que transmite sensaciones y emociones", "Un efecto óptico sin valor", "Una herramienta solo para fondos"], ans: 1},
+            {q: "¿Qué son los colores primarios en el modelo RGB?", opts: ["Rojo, verde y azul", "Rojo, amarillo y azul", "Cian, magenta y amarillo", "Negro, blanco y gris"], ans: 0},
+            {q: "¿Qué representa el contraste de color?", opts: ["La mezcla entre dos colores iguales", "La diferencia visual entre dos tonos que los hace resaltar", "La combinación de texturas", "El equilibrio entre colores fríos"], ans: 1},
+            {q: "¿Qué efecto produce un alto contraste en el diseño?", opts: ["Facilita la lectura y atrae la atención del espectador", "Reduce la claridad", "Vuelve el diseño aburrido", "Elimina la jerarquía visual"], ans: 0},
+            {q: "¿Qué tipo de colores transmiten calma y serenidad?", opts: ["Colores fríos", "Colores cálidos", "Colores complementarios", "Colores saturados"], ans: 0},
+            {q: "¿Qué es la tipografía?", opts: ["El arte de usar imágenes", "El conjunto de letras diseñadas con características formales comunes", "La técnica de imprimir en madera", "El diseño de iconos"], ans: 1},
+            {q: "¿Qué son las tipografías serif?", opts: ["Letras con terminaciones decorativas o remates", "Letras sin adornos", "Letras manuscritas", "Letras deformadas"], ans: 0},
+            {q: "Las tipografías sans serif se caracterizan por:", opts: ["Tener líneas curvas", "No tener remates y proyectar modernidad", "Tener un diseño clásico", "Ser solo para títulos"], ans: 1},
+            {q: "¿Qué tipo de tipografía se usa comúnmente para dar una apariencia formal y tradicional?", opts: ["Sans serif", "Serif", "Script", "Decorativa"], ans: 1},
+            {q: "¿Qué característica debe tener una tipografía en un logotipo?", opts: ["Ser legible y representar la personalidad de la marca", "Ser muy decorativa", "Cambiar constantemente", "Tener muchos colores"], ans: 0},
+            {q: "¿Qué es un logotipo?", opts: ["Una imagen sin texto", "Una representación gráfica basada en texto o palabra", "Un ícono simbólico", "Una forma geométrica"], ans: 1},
+            {q: "¿Qué es un isotipo?", opts: ["El símbolo o ícono que representa a la marca sin texto", "Una combinación de palabra e imagen", "El eslogan de la empresa", "Una firma digital"], ans: 0},
+            {q: "¿Qué es un imagotipo?", opts: ["La unión del símbolo y el texto que pueden funcionar juntos o por separado", "Un tipo de tipografía", "Un logotipo tridimensional", "Un ícono abstracto sin significado"], ans: 0},
+            {q: "¿Qué es un isologo?", opts: ["El texto y el símbolo unidos en un solo elemento gráfico", "Una palabra suelta", "Un logo hecho solo de iniciales", "Un logotipo animado"], ans: 0},
+            {q: "¿Cuál de las siguientes afirmaciones es correcta?", opts: ["Todos los logos son isologos", "Todos los logos deben tener símbolos", "No todos los logos necesitan imágenes, algunos solo usan texto", "Los logos no usan color"], ans: 2},
+            {q: "¿Por qué es importante la coherencia visual en el diseño gráfico?", opts: ["Porque genera identidad y refuerza la marca", "Porque usa muchos colores", "Porque evita el contraste", "Porque limita la creatividad"], ans: 0},
+            {q: "¿Qué objetivo principal tiene el diseño gráfico en la comunicación visual?", opts: ["Impactar sin transmitir mensaje", "Comunicar de forma clara, estética y funcional", "Mostrar efectos visuales", "Llenar espacio"], ans: 1},
+            {q: "¿Qué principio permite jerarquizar los elementos visuales?", opts: ["Armonía", "Contraste", "Equilibrio", "Movimiento"], ans: 1},
+            {q: "¿Qué característica diferencia un logotipo profesional de uno amateur?", opts: ["La cantidad de detalles", "La aplicación correcta de color, forma y tipografía", "El uso de efectos 3D", "La complejidad del diseño"], ans: 1},
+            {q: "¿Qué papel cumple el diseñador gráfico en la actualidad?", opts: ["Decorar imágenes", "Comunicar visualmente mensajes, emociones e identidades", "Dibujar logotipos únicamente", "Crear solo material impreso"], ans: 1},
+            {q: "¿Qué es el diseño web?", opts: ["La creación de páginas impresas", "El proceso de planificar, crear y mantener sitios web atractivos y funcionales", "Solo la programación de un sitio", "La elaboración de redes sociales"], ans: 1},
+            {q: "¿Cuál es el objetivo principal del diseño web?", opts: ["Llenar la página con información", "Comunicar de forma clara y ofrecer una buena experiencia al usuario", "Incluir todos los efectos posibles", "Mostrar animaciones"], ans: 1},
+            {q: "¿Qué significa que un sitio sea responsive?", opts: ["Que responde a los mensajes del usuario", "Que se adapta correctamente a diferentes dispositivos y tamaños de pantalla", "Que tiene animaciones interactivas", "Que carga rápido en computadoras"], ans: 1},
+            {q: "¿Qué lenguaje se usa para definir la estructura del contenido web?", opts: ["CSS", "JavaScript", "HTML", "PHP"], ans: 2},
+            {q: "¿Qué lenguaje controla la apariencia visual de un sitio web?", opts: ["HTML", "CSS", "Python", "SQL"], ans: 1},
+            {q: "¿Cuál de los siguientes lenguajes permite agregar interactividad a una página web?", opts: ["CSS", "HTML", "JavaScript", "XML"], ans: 2},
+            {q: "¿Qué es la usabilidad en diseño web?", opts: ["El número de visitas que recibe un sitio", "La facilidad con la que el usuario puede navegar y encontrar información", "La cantidad de efectos visuales", "La velocidad del servidor"], ans: 1},
+            {q: "¿Qué característica es esencial en un diseño web moderno?", opts: ["Navegación clara e intuitiva", "Muchas ventanas emergentes", "Texto en exceso", "Colores muy contrastantes sin relación"], ans: 0},
+            {q: "¿Qué es la experiencia de usuario (UX)?", opts: ["El aspecto visual del sitio", "La percepción y satisfacción del usuario al interactuar con el sitio", "El código del sitio", "La velocidad del servidor"], ans: 1},
+            {q: "¿Qué es la interfaz de usuario (UI)?", opts: ["El conjunto de elementos visuales e interactivos que permiten al usuario navegar el sitio", "El lenguaje de programación usado", "El contenido textual", "La base de datos"], ans: 0},
+            {q: "¿Qué formato de imagen es ideal para fotografías en la web?", opts: ["SVG", "JPG/JPEG", "GIF", "BMP"], ans: 1},
+            {q: "¿Qué formato es más adecuado para logotipos o gráficos vectoriales?", opts: ["JPG", "PNG", "SVG", "BMP"], ans: 2},
+            {q: "¿Qué significa la sigla SEO en diseño web?", opts: ["Sistema de Entrada Online", "Search Engine Optimization", "Software Estándar de Ordenadores", "Site Easy Operation"], ans: 1},
+            {q: "¿Cuál es el propósito del SEO?", opts: ["Mejorar la visibilidad de un sitio web en los motores de búsqueda", "Diseñar el logotipo", "Aumentar el peso de las imágenes", "Crear animaciones"], ans: 0},
+            {q: "¿Qué debe evitar un buen diseño web?", opts: ["Sobrecargar la página con texto, imágenes o animaciones innecesarias", "Estructura clara", "Navegación sencilla", "Enlaces visibles"], ans: 0},
+            {q: "¿Qué es una landing page?", opts: ["Una página de inicio genérica", "Una página creada específicamente para convertir visitantes en clientes o registros", "Una página de error", "Una página de contacto"], ans: 1},
+            {q: "¿Qué herramienta se usa comúnmente para construir sitios web sin programar?", opts: ["Photoshop", "WordPress", "Excel", "Illustrator"], ans: 1},
+            {q: "¿Qué aspecto se debe cuidar en la tipografía web?", opts: ["Que sea legible en todos los dispositivos y tamaños", "Que sea decorativa aunque no se lea", "Que ocupe mucho espacio", "Que tenga colores múltiples"], ans: 0},
+            {q: "¿Qué combinación de colores es más recomendable?", opts: ["Tonos contrastantes y coherentes con la identidad de la marca", "Colores saturados al azar", "Mezcla de todos los colores posibles", "Solo colores oscuros"], ans: 0},
+            {q: "¿Por qué es importante la velocidad de carga del sitio web?", opts: ["Porque afecta la experiencia del usuario y el posicionamiento SEO", "Porque permite más efectos visuales", "Porque mejora los colores", "Porque ahorra espacio en el servidor"], ans: 0},
+            {q: "¿Qué debe incluir siempre un buen diseño web en su encabezado?", opts: ["El logotipo y el menú de navegación", "Solo texto", "Publicidad", "Videos automáticos"], ans: 0},
+            {q: "¿Qué es el footer o pie de página?", opts: ["La parte superior de la web", "La parte inferior con información de contacto, enlaces y derechos", "Un menú flotante", "Una ventana emergente"], ans: 1},
+            {q: "¿Qué tipo de diseño usa cuadrículas o rejillas para organizar el contenido?", opts: ["Diseño modular o grid", "Diseño libre", "Diseño saturado", "Diseño desordenado"], ans: 0},
+            {q: "¿Qué es un wireframe?", opts: ["Un boceto estructural de una página web antes del diseño visual", "El código HTML", "Un menú desplegable", "Un efecto de animación"], ans: 0},
+            {q: "¿Qué debe priorizar todo diseñador web?", opts: ["La claridad, la funcionalidad y la accesibilidad del sitio", "Los efectos visuales excesivos", "El uso de tipografías difíciles", "La complejidad del código"], ans: 0},
+            {q: "¿Qué es la administración de una página web?", opts: ["Solo crear el sitio web", "Gestionar, mantener y actualizar un sitio para garantizar su funcionamiento y seguridad", "Promocionar el sitio en redes sociales", "Programar código"], ans: 1},
+            {q: "¿Cuál es el objetivo principal de administrar una página web?", opts: ["Cambiar su diseño constantemente", "Asegurar que el sitio funcione correctamente, esté actualizado y sea seguro", "Publicar información sin control", "Incrementar el tamaño del sitio"], ans: 1},
+            {q: "¿Qué es un CMS (Content Management System)?", opts: ["Un tipo de servidor", "Un sistema que permite crear y administrar contenido web fácilmente", "Un antivirus", "Un protocolo de seguridad"], ans: 1},
+            {q: "Ejemplo popular de CMS es:", opts: ["Windows", "WordPress", "Photoshop", "Excel"], ans: 1},
+            {q: "¿Qué función cumple el hosting?", opts: ["Guardar archivos en la computadora personal", "Alojar los archivos del sitio para que esté disponible en internet", "Crear dominios", "Bloquear accesos"], ans: 1},
+            {q: "¿Qué es un dominio web?", opts: ["El nombre que identifica un sitio en internet (ejemplo: www.miempresa.com)", "Un tipo de servidor", "Un enlace interno", "Un correo electrónico"], ans: 0},
+            {q: "¿Qué significa mantener un sitio web?", opts: ["Revisar, actualizar y corregir errores para garantizar su correcto funcionamiento", "Dejarlo sin cambios", "Publicar contenido antiguo", "Reducir sus funciones"], ans: 0},
+            {q: "¿Por qué es importante actualizar el software del sitio web?", opts: ["Para mantener la seguridad y compatibilidad con nuevas tecnologías", "Solo para cambiar el diseño", "Para borrar información", "Para agregar publicidad"], ans: 0},
+            {q: "¿Qué son las copias de seguridad (backups)?", opts: ["Versiones de respaldo del sitio que se crean para evitar pérdida de datos", "Imágenes del sitio", "Actualizaciones automáticas", "Publicaciones de blog"], ans: 0},
+            {q: "¿Cada cuánto tiempo se recomienda realizar un backup del sitio?", opts: ["Una vez al año", "Según la frecuencia de actualizaciones, idealmente semanal o diaria", "Nunca", "Solo al crear el sitio"], ans: 1},
+            {q: "¿Qué herramienta permite medir el tráfico y comportamiento de los visitantes en un sitio web?", opts: ["Google Maps", "Google Analytics", "Adobe Illustrator", "WordPress"], ans: 1},
+            {q: "¿Qué significa la seguridad web?", opts: ["Proteger un sitio y sus datos frente a ataques o accesos no autorizados", "Agregar contraseñas complicadas", "Instalar software de diseño", "Cifrar solo imágenes"], ans: 0},
+            {q: "¿Qué es un certificado SSL?", opts: ["Un documento físico", "Una tecnología que cifra los datos transmitidos entre el servidor y el usuario", "Un antivirus", "Una licencia de dominio"], ans: 1},
+            {q: "Una dirección segura en la web comienza con:", opts: ["ftp://", "http://", "https://", "www://"], ans: 2},
+            {q: "¿Qué significa el término SEO en la administración de páginas web?", opts: ["Seguridad Electrónica Online", "Search Engine Optimization (Optimización para motores de búsqueda)", "Sistema de Edición Online", "Software Estático Organizado"], ans: 1},
+            {q: "¿Por qué el SEO es importante en la administración web?", opts: ["Porque ayuda a que el sitio aparezca mejor posicionado en buscadores", "Porque cambia el color del sitio", "Porque aumenta los errores", "Porque protege el servidor"], ans: 0},
+            {q: "¿Qué se entiende por tiempo de carga en una página web?", opts: ["El tiempo que tarda el usuario en leer el contenido", "El tiempo que tarda en abrirse completamente el sitio", "La velocidad del internet del usuario", "El tiempo que tarda en publicarse"], ans: 1},
+            {q: "Un tiempo de carga lento puede afectar:", opts: ["Solo al diseño", "La experiencia del usuario y el posicionamiento SEO", "El tamaño de las imágenes", "Nada importante"], ans: 1},
+            {q: "¿Qué es la accesibilidad web?", opts: ["La facilidad con la que personas con distintas capacidades pueden usar el sitio", "El acceso restringido al servidor", "La velocidad de conexión", "La cantidad de enlaces"], ans: 0},
+            {q: "¿Qué se debe revisar al administrar un sitio web?", opts: ["Contenido actualizado, enlaces, formularios, seguridad y rendimiento", "Solo las imágenes", "Solo los colores", "Solo la publicidad"], ans: 0},
+            {q: "¿Qué significa MS-DOS?", opts: ["Microsoft Disk Operating Software", "Micro-Soft Disk Operating System", "Microsoft Desktop Operating System", "Micro System Disk Operating"], ans: 1},
+            {q: "¿En qué año fue lanzado MS-DOS?", opts: ["1979", "1981", "1983", "1985"], ans: 1},
+            {q: "¿Qué característica NO era propia de MS-DOS?", opts: ["Sistema monousuario", "Sistema monotarea", "Interfaz gráfica de usuario", "Interfaz de línea de comandos"], ans: 2},
+            {q: "¿Qué significa TSR en MS-DOS?", opts: ["Total System Resources", "Terminate and Stay Resident", "Technical System Response", "Transfer System Register"], ans: 1},
+            {q: "¿En qué año fue lanzado Windows 1.01?", opts: ["1983", "1985", "1987", "1989"], ans: 1},
+            {q: "¿Cuál fue la principal innovación de Windows 2.03?", opts: ["Ventanas no superpuestas", "Ventanas superpuestas", "Uso del mouse", "Menús desplegables"], ans: 1},
+            {q: "¿Qué resolución soportaba Windows 3.0 con VGA?", opts: ["320x240 con 16 colores", "640x480 con 256 colores", "800x600 con 16 colores", "1024x768 con 256 colores"], ans: 1},
+            {q: "¿Qué innovación tipográfica introdujo Windows 3.1?", opts: ["Fuentes bitmap", "Fuentes vectoriales", "Fuentes TrueType", "Fuentes PostScript"], ans: 2},
+            {q: "¿En qué año se lanzó Windows for Workgroups 3.11?", opts: ["1991", "1992", "1993", "1994"], ans: 2},
+            {q: "¿Cuál fue la característica más revolucionaria de Windows 95?", opts: ["Soporte para internet", "El botón de Inicio", "Nombres de archivo largos", "Plug and Play"], ans: 1},
+            {q: "¿Qué Windows integró Internet Explorer como componente fundamental?", opts: ["Windows 95", "Windows 98", "Windows ME", "Windows 2000"], ans: 1},
+            {q: "¿Por qué Windows ME es recordado negativamente?", opts: ["Alto precio", "Inestabilidad crónica", "Falta de características", "Incompatibilidad total"], ans: 1},
+            {q: "¿Qué arquitectura utilizaba Windows 2000?", opts: ["DOS", "NT", "9x", "ME"], ans: 1},
+            {q: "¿Cuántas instalaciones confirmadas tuvo Windows XP?", opts: ["250 millones", "350 millones", "450 millones", "550 millones"], ans: 2},
+            {q: "¿Por qué fue descontinuado Windows XP?", opts: ["Bajo rendimiento", "Debilidades de seguridad", "Falta de soporte de hardware", "Alto costo"], ans: 1},
+            {q: "¿Qué introdujo Windows Vista por primera vez?", opts: ["DirectX", "Windows Defender integrado", "Internet Explorer", "Windows Media Player"], ans: 1},
+            {q: "¿Qué característica visual revolucionaria introdujo Vista?", opts: ["Metro UI", "Aero Glass", "Fluent Design", "Material Design"], ans: 1},
+            {q: "¿En qué año fue lanzado Windows 7?", opts: ["2007", "2008", "2009", "2010"], ans: 2},
+            {q: "¿Qué hace la característica 'Snap' de Windows 7?", opts: ["Capturas de pantalla", "Organización automática de ventanas", "Sincronización de archivos", "Búsqueda avanzada"], ans: 1},
+            {q: "¿Cuál fue el cambio más significativo en Windows 8?", opts: ["Soporte USB 3.0", "Windows Store", "Rediseño del menú de operaciones", "Arranque rápido"], ans: 2},
+            {q: "¿En qué año fue lanzado Windows 10?", opts: ["2013", "2014", "2015", "2016"], ans: 2},
+            {q: "¿Qué asistente personal se integró en Windows 10?", opts: ["Siri", "Alexa", "Cortana", "Google Assistant"], ans: 2},
+            {q: "¿Cuándo fue anunciado Windows 11?", opts: ["24 de junio de 2020", "24 de junio de 2021", "24 de julio de 2021", "24 de agosto de 2021"], ans: 1},
+            {q: "¿Qué es un Sistema Operativo?", opts: ["Un programa de aplicación", "Software intermediario entre usuario y hardware", "Un lenguaje de programación", "Una base de datos"], ans: 1},
+            {q: "¿Cuál NO es un objetivo fundamental de un SO?", opts: ["Ejecutar programas de usuario", "Hacer el sistema cómodo de usar", "Crear contenido multimedia", "Utilizar el hardware eficientemente"], ans: 2},
+            {q: "¿Qué componente proporciona recursos básicos?", opts: ["Sistema Operativo", "Hardware", "Aplicaciones", "Usuarios"], ans: 1},
+            {q: "¿Qué es el Kernel en un SO?", opts: ["El programa que se ejecuta continuamente", "La interfaz gráfica", "El navegador web", "Las aplicaciones instaladas"], ans: 0},
+            {q: "¿Qué tipo de interrupción es generada por software?", opts: ["Hardware interrupt", "Trap", "IRQ", "NMI"], ans: 1},
+            {q: "¿Qué principio dice que un sistema es tan seguro como su eslabón más débil?", opts: ["Principio de redundancia", "Principio de seguridad mínima", "Principio del eslabón más débil", "Principio de disponibilidad"], ans: 2},
+            {q: "¿Qué sistema de archivos es común en Linux?", opts: ["FAT32", "NTFS", "ext4", "HFS+"], ans: 2},
+            {q: "¿Qué significa RTOS?", opts: ["Real Time Operating Software", "Real Time Operating System", "Rapid Time Operating System", "Remote Time Operating System"], ans: 1},
+            {q: "¿Cuál es la característica principal de un RTOS?", opts: ["Máximo rendimiento", "Garantizar cumplimiento de plazos exactos", "Bajo costo", "Interfaz gráfica avanzada"], ans: 1},
+            {q: "Un marcapasos es ejemplo de aplicación de:", opts: ["RTOS Tiempo Real Suave", "RTOS Tiempo Real Firme", "RTOS Tiempo Real Duro", "Sistema operativo convencional"], ans: 2},
+            {q: "¿En qué década surgieron los primeros RTOS?", opts: ["1950-1960", "1960-1970", "1970-1980", "1980-1990"], ans: 1},
+            {q: "El sistema de guiado del Apolo 11 utilizó:", opts: ["Windows", "Linux", "Uno de los primeros RTOS", "MS-DOS"], ans: 2},
+            {q: "¿Qué es el determinismo en un RTOS?", opts: ["Ejecución aleatoria", "Garantía de ejecución en tiempos exactos", "Mayor velocidad", "Menor consumo de energía"], ans: 1},
+            {q: "¿En qué año fue lanzado FreeRTOS?", opts: ["1997", "2000", "2003", "2010"], ans: 2},
+            {q: "Tiempo máximo de respuesta de un sistema anticolisión vehicular:", opts: ["1 milisegundo", "5 milisegundos", "10 milisegundos", "50 milisegundos"], ans: 2},
+            {q: "En un RTOS Tiempo Real Duro, ¿qué sucede si hay retraso?", opts: ["Se degrada el rendimiento", "Causa falla del sistema", "Se pierde calidad de servicio", "No pasa nada grave"], ans: 1},
+            {q: "¿Qué RTOS utilizó el Mars Perseverance Rover?", opts: ["FreeRTOS", "QNX", "VxWorks", "ThreadX"], ans: 2},
+            {q: "¿Cuál es el tamaño mínimo del kernel de FreeRTOS?", opts: ["2KB", "4KB", "10KB", "20KB"], ans: 1},
+            {q: "¿Qué beneficio NO es característico de un RTOS?", opts: ["Fiabilidad y previsibilidad", "Gastos generales mínimos", "Mayor costo de implementación", "Tolerancia a fallos"], ans: 2},
+            {q: "¿Qué empresa desarrolla QNX actualmente?", opts: ["Microsoft", "Apple", "BlackBerry", "Google"], ans: 2},
+            {q: "¿Cuál es la proyección del mercado de RTOS para 2034?", opts: ["$5.97 mil millones", "$8.50 mil millones", "$10.00 mil millones", "$12.21 mil millones"], ans: 3},
+            {q: "En una línea automotriz, ¿cada cuánto se ejecuta la soldadura?", opts: ["1.5 segundos", "2.3 segundos", "3.0 segundos", "5.0 segundos"], ans: 1},
+            {q: "¿Qué significa la tríada CIA en seguridad?", opts: ["Control, Integridad, Análisis", "Confidencialidad, Integridad, Autenticación", "Confidencialidad, Integridad, Disponibilidad", "Control, Información, Acceso"], ans: 2},
+            {q: "¿Cuántos ciberataques ocurren por día?", opts: ["1,000", "2,000", "4,000", "10,000"], ans: 2},
+            {q: "¿Qué porcentaje de breaches son por error humano?", opts: ["50%", "75%", "85%", "95%"], ans: 3},
+            {q: "¿Cuánto tiempo promedio toma detectar un breach?", opts: ["30 días", "90 días", "180 días", "280 días"], ans: 3},
+            {q: "¿Qué ataque famoso realizó el grupo Lazarus?", opts: ["Colonial Pipeline", "Sony Pictures y WannaCry", "SolarWinds", "CodeCov"], ans: 1},
+            {q: "¿Cuántas organizaciones afectó el ataque SolarWinds?", opts: ["5,000", "10,000", "18,000", "25,000"], ans: 2},
+            {q: "¿Qué significa 'Never trust, always verify'?", opts: ["Defense in Depth", "Zero Trust", "Least Privilege", "CIA Triad"], ans: 1},
+            {q: "¿Qué framework tiene 5 funciones: Identify, Protect, Detect, Respond, Recover?", opts: ["ISO 27001", "COBIT", "NIST Framework", "PCI DSS"], ans: 2},
+            {q: "¿Qué es RTO en continuidad del negocio?", opts: ["Real Time Operation", "Recovery Time Objective", "Risk Transfer Operation", "Response Time Optimization"], ans: 1},
+            {q: "¿Qué regulación europea impone multas del 4% del revenue?", opts: ["CCPA", "HIPAA", "GDPR", "SOX"], ans: 2},
+            {q: "¿Cuáles son factores que ponen en peligro a la PC?", opts: ["Solo el polvo", "Solo el calor", "Calor, polvo, campos magnéticos, problemas eléctricos", "Solo los virus"], ans: 2},
+            {q: "Periodo aproximado de limpieza en el hogar:", opts: ["3 meses", "6 meses", "1 año", "2 años"], ans: 1},
+            {q: "Periodo aproximado de limpieza en la oficina:", opts: ["3 meses", "6 meses", "1 año", "2 años"], ans: 0},
+            {q: "¿Qué NO es actividad del mantenimiento preventivo?", opts: ["Inspección periódica", "Limpieza de componentes", "Esperar a que falle el equipo", "Lubricación de partes móviles"], ans: 2},
+            {q: "¿Qué herramienta expulsa aire frío?", opts: ["Compresor industrial", "Ventilador común", "Expulsora de aire", "Aspiradora doméstica"], ans: 2},
+            {q: "¿Cuál fue la red precursora de Internet, establecida en 1969?", opts: ["TCP/IP", "ARPANET", "Intranet", "VDSL"], ans: 1},
+            {q: "¿Qué protocolo se estandarizó en 1983?", opts: ["HTTP", "TCP/IP", "DNS", "HTML"], ans: 1},
+            {q: "¿Cuál es la principal diferencia entre LAN e Internet?", opts: ["El área geográfica que cubren", "La velocidad de conexión", "El tipo de ordenadores", "El sistema operativo"], ans: 0},
+            {q: "¿Cómo se define una 'Intranet'?", opts: ["Una red WAN pública", "Una red privada dentro de una organización que usa tecnología Internet", "Recursos con contraseña en Internet", "Cables físicos de Internet"], ans: 1},
+            {q: "La WWW se basa en:", opts: ["Correos y chats", "IP y DNS", "Hipertextos y multimedia", "Antivirus y firewalls"], ans: 2},
+            {q: "¿Qué lenguaje se usa para escribir páginas web?", opts: ["HTML", "HTTP", "URL", "TCP/IP"], ans: 0},
+            {q: "¿Cómo se llama la dirección única de un recurso en Internet?", opts: ["DNS", "IP", "URL", "HTTP"], ans: 2},
+            {q: "Diferencia clave entre HTTP y HTTPS:", opts: ["HTTP es para texto", "HTTP sin cifrar, HTTPS cifrado", "HTTP es más antiguo", "No hay diferencia"], ans: 1},
+            {q: "¿Función principal de un navegador web?", opts: ["Proveer conexión física", "Interpretar HTML y mostrarlo", "Proteger de virus", "Enviar correos"], ans: 1},
+            {q: "Los buscadores se clasifican en:", opts: ["Rápidos y Lentos", "Google y Yahoo", "Tipo Directorio y Tipo Índice", "Seguros y No seguros"], ans: 2},
+            {q: "Un portal vertical es:", opts: ["Portal horizontal", "Portal con contenidos especializados", "Portal de índice", "Portal multimedia"], ans: 1},
+            {q: "'Malware' es abreviatura de:", opts: ["Malicious Software", "Mail Software", "Software de Microsoft", "Software de Multimedia"], ans: 0},
+            {q: "Propósito de certificados y firmas digitales:", opts: ["Acelerar descargas", "Realizar transacciones seguras", "Diseñar páginas web", "Evitar spam"], ans: 1},
+            {q: "VDSL se usa especialmente para:", opts: ["RTC", "Transmisión de TV HD", "PLC", "Módem USB"], ans: 1},
+            {q: "¿Qué NO es recomendación para proteger el SO?", opts: ["Activar firewall", "Instalar antivirus", "Activar actualizaciones automáticas", "Comprar el ordenador más caro"], ans: 3},
+            {q: "Definición de 'lenguajes de programación':", opts: ["Herramientas para IA", "Puente entre hardware y software", "Motores gráficos", "Motores de evolución tecnológica"], ans: 1},
+            {q: "Lenguajes más usados para IA y ML:", opts: ["C# y C++", "HTML y JavaScript", "Go y TypeScript", "Python y R"], ans: 3},
+            {q: "Lenguajes destacados para videojuegos:", opts: ["Python y R", "C# y C++", "Julia y Go", "JavaScript y TypeScript"], ans: 1},
+            {q: "Herramienta que clasifica popularidad de lenguajes:", opts: ["Índice TIOBE", "Índice Google", "Índice desarrollo software", "Índice IA"], ans: 0},
+            {q: "¿Por qué Python es fácil de aprender?", opts: ["Maneja tareas de red", "Mejor para Android", "Sintaxis sencilla y clara", "Análisis estadístico"], ans: 2},
+            {q: "Lenguaje preferido para aplicaciones empresariales y Android:", opts: ["PHP", "Go", "Python", "Java"], ans: 3},
+            {q: "¿Para qué se creó PHP?", opts: ["Apps móviles Android", "Videojuegos inmersivos", "Sitios web dinámicos", "Cálculos matemáticos"], ans: 2},
+            {q: "Principal fortaleza de R:", opts: ["Fácil de aprender", "Servicios en la nube", "Análisis de datos y estadística", "CMS como WordPress"], ans: 2},
+            {q: "TypeScript es:", opts: ["Julia", "Versión mejorada de JavaScript con tipado estático", "PHP", "Go"], ans: 1},
+            {q: "Go es ideal para:", opts: ["Servicios en la nube y sistemas distribuidos", "R", "C#", "PHP"], ans: 0},
+            {q: "¿Qué es una Base de Datos?", opts: ["Programa como MySQL", "Conjunto de datos relacionados", "Grupo de usuarios", "Aplicaciones preconcebidas"], ans: 1},
+            {q: "Los 'datos' son:", opts: ["Hechos conocidos que pueden registrarse", "Opiniones subjetivas", "Solo números de teléfono", "Programas de aplicación"], ans: 0},
+            {q: "Ejemplo de datos:", opts: ["Programas", "MySQL", "Números de teléfonos", "Sistemas de Gestión"], ans: 2},
+            {q: "Una BD representa algún aspecto del:", opts: ["mundo real", "software", "hardware", "propósito de usuario"], ans: 0},
+            {q: "Una BD es un conjunto de datos lógicamente:", opts: ["separado, sin significado", "aleatorio", "coherente, con significado", "manual"], ans: 2},
+            {q: "¿Para qué se diseña una BD?", opts: ["Propósito específico", "Cualquier tamaño", "Generada manualmente", "Reemplazar MySQL"], ans: 0},
+            {q: "Una BD tiene ciertas:", opts: ["fuentes manuales", "aplicaciones preconcebidas", "limitaciones de tamaño", "conexiones Oracle"], ans: 1},
+            {q: "¿De qué maneras se generan las BD?", opts: ["Lógica y coherentemente", "Por usuarios y aplicaciones", "Manualmente y mecánicamente", "Con MySQL y Oracle"], ans: 2},
+            {q: "Las BD se mantienen mediante:", opts: ["Sistema de Gestión de BD", "datos relacionados", "grupo de usuarios", "propósito específico"], ans: 0},
+            {q: "Característica del tamaño de BD:", opts: ["Muy grandes", "Pequeñas", "Pueden tener cualquier tamaño", "Limitadas por SGBD"], ans: 2},
+            {q: "Función principal de un SGBD:", opts: ["Solo almacenar datos", "Interfaz entre usuario, aplicación y BD", "Diseño gráfico", "Conectar a Internet"], ans: 1},
+            {q: "El modelo relacional se basa en:", opts: ["Documentos JSON", "Grafos", "Tablas (filas y columnas)", "Estructura árbol"], ans: 2},
+            {q: "Lenguaje para consultar BD relacionales:", opts: ["Python", "HTML", "SQL", "JavaScript"], ans: 2},
+            {q: "Campo que identifica cada fila únicamente:", opts: ["Clave foránea", "Clave primaria", "Índice", "Tipo de dato"], ans: 1},
+            {q: "MySQL y Oracle son ejemplos de:", opts: ["Lenguajes programación", "Sistemas Operativos", "Servidores web", "SGBD"], ans: 3},
+            {q: "Característica de NoSQL:", opts: ["Siempre usan tablas", "No almacenan datos", "Más flexibles, sin esquema fijo", "Solo manuales"], ans: 2},
+            {q: "Comando SQL para leer datos:", opts: ["INSERT", "DELETE", "SELECT", "CREATE"], ans: 2},
+            {q: "Comando SQL para añadir registro:", opts: ["INSERT", "UPDATE", "SELECT", "NEW"], ans: 0},
+            {q: "Para enlazar dos tablas se usa:", opts: ["Índice", "Clave primaria", "Tipo de dato", "Clave foránea"], ans: 3},
+            {q: "La 'C' en ACID significa:", opts: ["Coherencia (Consistency)", "Cómputo", "Capacidad", "Cliente"], ans: 0},
+            {q: "Requisito para que Workbench se conecte a localhost:", opts: ["Tener Workbench instalado", "Tener Python", "Tener MySQL Server en ejecución", "Tener VS Code"], ans: 2},
+            {q: "Rol principal de MySQL Workbench:", opts: ["Interfaz gráfica para MySQL Server", "Lenguaje programación", "La BD misma", "Sistema operativo"], ans: 0},
+            {q: "Forma visual de crear esquema en Workbench:", opts: ["File -> New Model", "Clic derecho en Schemas -> Create Schema", "Arrastrar ícono", "Administration -> Users"], ans: 1},
+            {q: "Comando SQL para crear esquema:", opts: ["NEW DATABASE", "MAKE SCHEMA", "SELECT DATABASE", "CREATE SCHEMA"], ans: 3},
+            {q: "¿Para qué sirve Charset/Collation?", opts: ["Contraseña de BD", "Número máximo de tablas", "Codificación de caracteres", "Tamaño máximo en MB"], ans: 2},
+            {q: "¿Cómo se define la 'Lógica'?", opts: ["Instrucciones de computadora", "Arte de encontrar camino eficiente", "Lenguaje formal", "Habilidad de comunicación"], ans: 1},
+            {q: "¿Qué es un 'Programa'?", opts: ["Dispositivo electrónico", "Conjunto de instrucciones (software)", "Diagrama de flujo", "Persona que codifica"], ans: 1},
+            {q: "Programación incluye diseñar, codificar, depurar y:", opts: ["Vender software", "Formatear computador", "Mantener código fuente", "Analizar competencia"], ans: 2},
+            {q: "Habilidad clave de programador:", opts: ["Mente analítica y comunicación efectiva", "Un solo lenguaje", "Diseño gráfico", "Trabajar en solitario"], ans: 0},
+            {q: "Lenguaje de 'Bajo Nivel':", opts: ["Cercano al humano", "Usa símbolos y reglas", "Entendible por computadora, difícil para programadores", "Integra editor y compilador"], ans: 2},
+            {q: "Programa que integra editor, compilador y depurador:", opts: ["Algoritmo Cuantitativo", "Diagrama de Flujo", "IDE", "Lenguaje Ensamblador"], ans: 2},
+            {q: "Tres partes fundamentales de un algoritmo:", opts: ["Entrada, Proceso, Salida", "Inicio, Fin, Instrucciones", "Variables, Decisiones, Bucles", "IDE, Compilador, Depurador"], ans: 0},
+            {q: "Algoritmo que describe vida cotidiana:", opts: ["Cuantitativo", "De bajo nivel", "Cualitativo", "De programación"], ans: 2},
+            {q: "Las 'Decisiones' se basan en:", opts: ["Velocidad procesador", "Memoria RAM", "Evaluación de condiciones lógicas", "Opinión del cliente"], ans: 2},
+            {q: "Herramienta gráfica para analizar algoritmo:", opts: ["Lenguaje alto nivel", "IDE", "Procesador de texto", "Diagrama de flujo"], ans: 3},
+            {q: "¿Qué es Python?", opts: ["Solo para web", "Lenguaje de propósito general e interpretado", "Se traduce antes de ejecutar", "Creado por Microsoft"], ans: 1},
+            {q: "¿Quién creó Python y cuándo?", opts: ["Dennis Ritchie 1989", "Guido Van Rossum 1991", "Bjarne Stroustrup 1991", "Guido Van Rossum 1989"], ans: 1},
+            {q: "¿Qué NO es característica de Python?", opts: ["Propósito general", "Multiparadigma", "Estáticamente tipado", "Dinámicamente tipado"], ans: 2},
+            {q: "Campo NO correcto de Python:", opts: ["Desarrollo web", "Seguridad Informática", "Creación de Sistemas Operativos", "Big Data"], ans: 2},
+            {q: "Frameworks para desarrollo web con Python:", opts: ["Kiwi y Pique", "Django y Flask", "fastAPI", "Pentesting"], ans: 1},
+            {q: "Dato curioso sobre algoritmos de Google:", opts: ["Creados con fastAPI", "Escritos en Java", "Creados en Python", "Para apps escritorio"], ans: 2},
+            {q: "Definición de algoritmo informático:", opts: ["Instrucciones definidas, ordenadas y acotadas", "Solo matemáticas", "Input y Output", "Lenguaje como Python"], ans: 0},
+            {q: "Tres partes de un algoritmo:", opts: ["Inicio, Nudo, Fin", "Input, Proceso, Output", "Preciso, Ordenado, Finito", "Secuencial, Selectivo, Repetitivo"], ans: 1},
+            {q: "Característica que significa 'sin ambigüedad':", opts: ["Precisos", "Ordenados", "Finitos", "Concretos"], ans: 0},
+            {q: "3 estructuras de programación básicas:", opts: ["Imperativas, Declarativas, Reactivas", "Input, Proceso, Output", "Secuenciales, Selectivas, Repetitivas", "Python, Java, JavaScript"], ans: 2}
+        ];
+
+        let currentQuestionIndex = 0;
+        let correctCount = 0;
+        let incorrectCount = 0;
+        let answered = false;
+        let selectedOption = -1;
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        shuffleArray(questions);
+
+        function renderQuestion() {
+            answered = false;
+            selectedOption = -1;
+            const q = questions[currentQuestionIndex];
+            
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            document.getElementById('totalQuestions').textContent = questions.length;
+            
+            const quizContent = document.getElementById('quizContent');
+            quizContent.innerHTML = `
+                <div class="question-container">
+                    <div class="question-number">Pregunta ${currentQuestionIndex + 1} de ${questions.length}</div>
+                    <div class="question-text">${q.q}</div>
+                    <div class="options">
+                        ${q.opts.map((opt, idx) => `
+                            <div class="option" data-index="${idx}">
+                                <strong>${String.fromCharCode(65 + idx)})</strong> ${opt}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div id="feedback"></div>
+                </div>
+                <div class="button-container">
+                    <button class="btn btn-secondary" id="prevBtn" ${currentQuestionIndex === 0 ? 'disabled' : ''}>
+                        ← Anterior
+                    </button>
+                    <button class="btn btn-primary" id="checkBtn">
+                        Verificar Respuesta
+                    </button>
+                    <button class="btn btn-secondary" id="nextBtn" style="display: none;">
+                        Siguiente →
+                    </button>
+                </div>
+            `;
+
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', function() {
+                    if (!answered) {
+                        document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+                        this.classList.add('selected');
+                        selectedOption = parseInt(this.dataset.index);
+                    }
+                });
+            });
+
+            document.getElementById('checkBtn').addEventListener('click', checkAnswer);
+            document.getElementById('prevBtn').addEventListener('click', prevQuestion);
+            const nextBtn = document.getElementById('nextBtn');
+            if (nextBtn) {
+                nextBtn.addEventListener('click', nextQuestion);
+            }
+        }
+
+        function checkAnswer() {
+            if (selectedOption === -1 || answered) return;
+            
+            answered = true;
+            const q = questions[currentQuestionIndex];
+            const options = document.querySelectorAll('.option');
+            const feedback = document.getElementById('feedback');
+            const checkBtn = document.getElementById('checkBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            options.forEach(opt => opt.classList.add('disabled'));
+
+            if (selectedOption === q.ans) {
+                correctCount++;
+                options[selectedOption].classList.add('correct');
+                feedback.className = 'feedback correct';
+                feedback.textContent = '¡Correcto! 🎉';
+            } else {
+                incorrectCount++;
+                options[selectedOption].classList.add('incorrect');
+                options[q.ans].classList.add('correct');
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = `Incorrecto. La respuesta correcta es: ${String.fromCharCode(65 + q.ans)}) ${q.opts[q.ans]}`;
+            }
+
+            document.getElementById('correctAnswers').textContent = correctCount;
+            document.getElementById('incorrectAnswers').textContent = incorrectCount;
+
+            checkBtn.style.display = 'none';
+            nextBtn.style.display = 'block';
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        }
+
+        function showResults() {
+            const percentage = ((correctCount / questions.length) * 100).toFixed(1);
+            let message = '';
+            let emoji = '';
+
+            if (percentage >= 90) {
+                message = '¡Excelente! 🏆';
+                emoji = '🌟';
+            } else if (percentage >= 70) {
+                message = '¡Muy bien! 👏';
+                emoji = '😊';
+            } else if (percentage >= 50) {
+                message = 'Puedes mejorar 💪';
+                emoji = '📚';
+            } else {
+                message = 'Sigue practicando 📖';
+                emoji = '💪';
+            }
+
+            document.getElementById('quizContent').style.display = 'none';
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = `
+                <h2>${message}</h2>
+                <div class="score-circle">
+                    <div class="score-value">${percentage}%</div>
+                    <div class="score-label">Tu puntuación ${emoji}</div>
+                </div>
+                <div class="results-details">
+                    <div class="result-card">
+                        <h3>Total Preguntas</h3>
+                        <p>${questions.length}</p>
+                    </div>
+                    <div class="result-card">
+                        <h3>Correctas</h3>
+                        <p style="color: #48bb78;">${correctCount}</p>
+                    </div>
+                    <div class="result-card">
+                        <h3>Incorrectas</h3>
+                        <p style="color: #f56565;">${incorrectCount}</p>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="location.reload()" style="margin-top: 30px; width: 100%;">
+                    🔄 Reintentar Quiz
+                </button>
+            `;
+        }
+
+        renderQuestion();
+    </script>
+</body>
+</html>
